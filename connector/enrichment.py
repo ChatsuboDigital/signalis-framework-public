@@ -32,39 +32,39 @@ def enrich_with_ssm(
     timeout_ms: int = 30000
 ) -> Optional[EnrichmentResult]:
     """
-    Enrich record using SSM member API.
+    Enrich record using Connector Agent API (SSM member access).
 
     SSM membership required — get your API key at:
     https://www.skool.com/ssmasters
 
-    Searches by domain + person name.
+    Requires domain + first name + last name.
+    Endpoint: POST https://api.connector-os.com/api/email/v2/find
     """
     if not api_key or not record.domain:
         return None
 
-    if not (record.first_name or record.full_name):
+    first_name = record.first_name or (record.full_name.split()[0] if record.full_name else '')
+    last_name = record.last_name or (record.full_name.split()[1] if record.full_name and len(record.full_name.split()) > 1 else '')
+
+    if not first_name or not last_name:
         return EnrichmentResult(
             action='FIND_PERSON',
             outcome='MISSING_INPUT',
-            source='none',
-            inputs_present={'domain': bool(record.domain), 'person_name': False}
+            source='ssm',
+            inputs_present={'domain': True, 'person_name': False}
         )
-
-    first_name = record.first_name or record.full_name.split()[0]
-    last_name = record.last_name or (record.full_name.split()[1] if len(record.full_name.split()) > 1 else '')
 
     try:
         response = requests.post(
-            'https://api.ssm.chatsubo.digital/v1/enrich',
+            'https://api.connector-os.com/api/email/v2/find',
             headers={
                 'Content-Type': 'application/json',
                 'Authorization': f'Bearer {api_key}',
             },
             json={
+                'firstName': first_name,
+                'lastName': last_name,
                 'domain': record.domain,
-                'first_name': first_name,
-                'last_name': last_name,
-                'company': record.company,
             },
             timeout=timeout_ms / 1000
         )
@@ -100,9 +100,9 @@ def enrich_with_ssm(
             action='FIND_PERSON',
             outcome='ENRICHED',
             email=email,
-            first_name=data.get('first_name', first_name),
-            last_name=data.get('last_name', last_name),
-            title=data.get('title', record.title or ''),
+            first_name=first_name,
+            last_name=last_name,
+            title=record.title or '',
             verified=True,
             source='ssm',
             inputs_present={'domain': True, 'person_name': True}
