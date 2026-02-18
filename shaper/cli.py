@@ -94,7 +94,6 @@ def interactive(no_banner: bool):
                 console.print("[bold cyan]What would you like to do?[/bold cyan]\n")
                 console.print("  [cyan]1[/cyan]  [bold]⚗  Shaper[/bold]      [dim]Transform raw data into outreach-ready CSVs[/dim]")
                 console.print("  [cyan]2[/cyan]  [bold]⚯  Connector[/bold]   [dim]Match supply & demand · enrich contacts · generate intros[/dim]")
-                console.print()
                 console.print("  [cyan]3[/cyan]  ◈  Settings    [dim]Configure API keys[/dim]")
                 console.print("  [cyan]4[/cyan]  ⟶  Update      [dim]Pull latest version from GitHub[/dim]")
                 console.print("  [cyan]0[/cyan]  ⊗  Exit\n")
