@@ -489,20 +489,17 @@ class ExaSignalGenerator:
 
             # ── Exa research ───────────────────────────────────────────────
             if data_type == 'supply':
-                # If we already have a description, skip Exa entirely for supply —
-                # the context_line is enough for the AI to write the signal.
+                # Supply: one search — company info for both signal and context.
+                # Skip if we already have a description and don't need context.
                 if existing_desc and not need_context:
                     supply_research = ''
                 else:
                     supply_research = self._search_supply(domain, company_name)
                 demand_research = ''
             else:
-                # Demand: parallel searches — hiring/funding for signal, company info for context
-                with cf.ThreadPoolExecutor(max_workers=2) as ex:
-                    demand_f = ex.submit(self._search_demand, domain, company_name) if need_signal else None
-                    supply_f = ex.submit(self._search_supply, domain, company_name) if need_context else None
-                    demand_research = demand_f.result() if demand_f else ''
-                    supply_research = supply_f.result() if supply_f else ''
+                # Demand: one search — hiring/funding activity for both signal and context.
+                demand_research = self._search_demand(domain, company_name) if (need_signal or need_context) else ''
+                supply_research = ''
 
             # ── Build AI prompts ───────────────────────────────────────────
             prompts: Dict[str, str] = {}
@@ -525,7 +522,8 @@ class ExaSignalGenerator:
                         research=demand_research,
                     )
 
-            context_research = supply_research or demand_research
+            # Context uses the research appropriate for each data type — no cross-pollination
+            context_research = demand_research if data_type == 'demand' else supply_research
             if need_context and context_research:
                 prompts['context'] = CONTEXT_PROMPT.format(
                     company_name=company_name or domain,
