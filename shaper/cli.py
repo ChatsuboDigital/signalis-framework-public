@@ -88,28 +88,28 @@ def interactive(no_banner: bool):
                         missing.append("AI key")
                     console.print(
                         f"[yellow]▲ Not configured: {', '.join(missing)} — "
-                        f"press [bold]S[/bold] to set up[/yellow]\n"
+                        f"press [bold]3[/bold] to set up[/yellow]\n"
                     )
 
                 console.print("[bold cyan]What would you like to do?[/bold cyan]\n")
                 console.print("  [cyan]1[/cyan]  [bold]⚗  Shaper[/bold]      [dim]Transform raw data into outreach-ready CSVs[/dim]")
                 console.print("  [cyan]2[/cyan]  [bold]⚯  Connector[/bold]   [dim]Match supply & demand · enrich contacts · generate intros[/dim]")
                 console.print()
-                console.print("  [cyan]S[/cyan]  ◈  Settings    [dim]Configure API keys[/dim]")
-                console.print("  [cyan]U[/cyan]  ⟶  Update      [dim]Pull latest version from GitHub[/dim]")
+                console.print("  [cyan]3[/cyan]  ◈  Settings    [dim]Configure API keys[/dim]")
+                console.print("  [cyan]4[/cyan]  ⟶  Update      [dim]Pull latest version from GitHub[/dim]")
                 console.print("  [cyan]0[/cyan]  ⊗  Exit\n")
 
                 top_choice = Prompt.ask(
                     "Select option",
-                    choices=["0", "1", "2", "s", "S", "u", "U"],
+                    choices=["0", "1", "2", "3", "4"],
                     default="1"
                 )
 
-                if top_choice.lower() == "s":
+                if top_choice == "3":
                     _do_setup()
                     continue
 
-                if top_choice.lower() == "u":
+                if top_choice == "4":
                     click.get_current_context().invoke(update)
                     continue
 

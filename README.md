@@ -65,8 +65,9 @@ The interactive menu guides you through everything:
 ```
   1  ⚗  Shaper       Transform raw data into outreach-ready CSVs
   2  ⚯  Connector    Match supply & demand · enrich contacts · generate intros
-  S  ◈  Settings     Configure API keys
-  U  ⟶  Update       Pull latest version from GitHub
+
+  3  ◈  Settings     Configure API keys
+  4  ⟶  Update       Pull latest version from GitHub
   0  ⊗  Exit
 ```
 
